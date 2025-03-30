@@ -1,4 +1,4 @@
-HW-2 | REST API | Express framework
+# HW-2 | REST API | Express framework
 
 Write a REST API to work with a contact collection. Use [Postman] to work with the REST API.
 
