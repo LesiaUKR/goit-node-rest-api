@@ -1,29 +1,50 @@
 import * as contactsService from "../services/contactsServices.js";
+import HttpError from "../helpers/HttpError.js";
+import ctrlWrapper from "../decorators/ctrlWrapper.js";
 
-console.log("contactsService", contactsService);
-
-export const getAllContacts = async (req, res) => {
-  try {
-    const contacts = await contactsService.listContacts();
-    res.json(contacts);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+const getAllContacts = async (req, res) => {
+  const data = await contactsService.listContacts();
+  res.json(data);
 };
 
-export const getOneContact = async (req, res) => {
-  const { contactId } = req.params;
-  const result = await contacts.getContactById(contactId);
+const getOneContact = async (req, res) => {
+  const { id } = req.params;
+  const data = await contactsService.getContactById(id);
+  if (!data) {
+    throw HttpError(404, `Contact with id ${id} not found`);
+  }
+  res.json(data);
+};
+
+const deleteContact = async (req, res) => {
+  const { id } = req.params;
+  const data = await contactsService.removeContact(id);
+  if (!data) {
+    throw HttpError(404, `Contact with id ${id} not found`);
+  }
+  res.json({
+    message: "Delete successfully",
+  });
+};
+
+const createContact = async (req, res) => {
+  const result = await contactsService.addContact(req.body);
+  res.status(201).json(result);
+};
+
+const updateContact = async (req, res) => {
+  const { id } = req.params;
+  const result = await contactsService.updateContact(id, req.body);
   if (!result) {
     throw HttpError(404, "Not found");
   }
   res.json(result);
-
-  console.log(req.params);
 };
 
-export const deleteContact = (req, res) => {};
-
-export const createContact = (req, res) => {};
-
-export const updateContact = (req, res) => {};
+export default {
+  getAllContacts: ctrlWrapper(getAllContacts),
+  getOneContact: ctrlWrapper(getOneContact),
+  deleteContact: ctrlWrapper(deleteContact),
+  createContact: ctrlWrapper(createContact),
+  updateContact: ctrlWrapper(updateContact),
+};

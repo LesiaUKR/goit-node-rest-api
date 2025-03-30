@@ -41,3 +41,14 @@ export async function addContact(name, email, phone) {
   await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
   return newContact;
 }
+
+//Повертає об'єкт оновленого контакту. Повертає null, якщо контакт з таким id не знайдений
+export async function updateContact(contactId, data) {
+  const contacts = await listContacts();
+  const index = contacts.findIndex(({ id }) => id === contactId);
+  if (index === -1) return null;
+
+  contacts[index] = { ...contacts[index], ...data };
+  await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
+  return contacts[index];
+}
