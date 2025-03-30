@@ -1,11 +1,5 @@
 [
   {
-    "id": "AeHIrLTr6JkxGE6SN-0Rw",
-    "name": "Allen Raymond",
-    "email": "nulla.ante@vestibul.co.uk",
-    "phone": "(992) 914-3792"
-  },
-  {
     "id": "qdggE76Jtbfd9eWJHrssH",
     "name": "Chaim Lewis",
     "email": "dui.in@egetlacus.ca",
@@ -58,5 +52,11 @@
     "name": "Lesia Soloviova",
     "email": "lesia@gmail.com",
     "phone": "(000) 111-22456"
+  },
+  {
+    "id": "c823krlQLptp_Z2Ou_w19",
+    "name": "Olya Petrowa",
+    "email": "olya@gmail.com",
+    "phone": "(333) 190-22456"
   }
 ]
