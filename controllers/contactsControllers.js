@@ -18,13 +18,11 @@ const getOneContact = async (req, res) => {
 
 const deleteContact = async (req, res) => {
   const { id } = req.params;
-  const data = await contactsService.removeContact(id);
-  if (!data) {
+  const deletedContact = await contactsService.removeContact(id);
+  if (!deletedContact) {
     throw HttpError(404, `Contact with id ${id} not found`);
   }
-  res.json({
-    message: "Delete successfully",
-  });
+  res.json(deletedContact);
 };
 
 const createContact = async (req, res) => {
