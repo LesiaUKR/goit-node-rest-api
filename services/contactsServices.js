@@ -1,54 +1,30 @@
-import fs from "node:fs/promises";
-import path from "node:path";
-import { nanoid } from "nanoid";
-
-const contactsPath = path.resolve("db", "contacts.json");
+import User from "../db/models/User.js";
+// const contactsPath = path.resolve("db", "contacts.json");
 
 // Повертає масив контактів
-export async function listContacts() {
-  const data = await fs.readFile(contactsPath, "utf-8");
-  return JSON.parse(data);
-}
+export const listContacts = async () => User.findAll();
 
 //Повертає об'єкт контакту з таким id. Повертає null, якщо контакт з таким id не знайдений
-export async function getContactById(contactId) {
-  const contacts = await listContacts();
-  const result = contacts.find(({ id }) => id === contactId);
-  return result || null;
-}
+export const getContactById = (contactId) =>
+   User.findOne({
+      where: { id: contactId },
+   });
 
 //Повертає об'єкт видаленого контакту. Повертає null, якщо контакт з таким id не знайдений
-export async function removeContact(contactId) {
-  const contacts = await listContacts();
-  const index = contacts.findIndex(({ id }) => id === contactId);
-  if (index === -1) return null;
-
-  const [deletedContact] = contacts.splice(index, 1);
-  await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
-  return deletedContact;
-}
+export const removeContact = (id) =>
+   User.destroy({
+      where: { id },
+   });
 
 //Повертає об'єкт доданого контакту (з id)
-export async function addContact(name, email, phone) {
-  const contacts = await listContacts();
-  const newContact = {
-    id: nanoid(),
-    ...name,
-    ...email,
-    ...phone,
-  };
-  contacts.push(newContact);
-  await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
-  return newContact;
-}
+export const addContact = (data) => User.create(data);
 
 //Повертає об'єкт оновленого контакту. Повертає null, якщо контакт з таким id не знайдений
-export async function updateContact(contactId, data) {
-  const contacts = await listContacts();
-  const index = contacts.findIndex(({ id }) => id === contactId);
-  if (index === -1) return null;
+export const updateContact = async (contactId, data) => {
+   const contact = await getContactById(contactId);
+   if (!contact) return null;
 
-  contacts[index] = { ...contacts[index], ...data };
-  await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
-  return contacts[index];
-}
+   return contact.update(data, {
+      returning: true,
+   });
+};
