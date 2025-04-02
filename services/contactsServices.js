@@ -28,3 +28,16 @@ export const updateContact = async (contactId, data) => {
       returning: true,
    });
 };
+
+//Повертає об'єкт оновленого контакту (тільки поле favorite). Повертає null, якщо контакт з таким id не знайдений
+export const updateStatusContact = async (contactId, { favorite }) => {
+   const contact = await getContactById(contactId);
+   if (!contact) return null;
+
+   return contact.update(
+      { favorite },
+      {
+         returning: true,
+      }
+   );
+};
