@@ -20,6 +20,7 @@ try {
    // console.log("Таблиці були створені або перезаписані!");
 } catch (error) {
    console.log(`Error connection to database ${error.message}`);
+   process.exit(1)
 }
 
 export default sequelize;

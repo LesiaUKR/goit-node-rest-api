@@ -1,23 +1,28 @@
-import User from "../db/models/User.js";
-// const contactsPath = path.resolve("db", "contacts.json");
+import Contact from "../db/models/Contacts.js";
 
 // Повертає масив контактів
-export const listContacts = async () => User.findAll();
+export const listContacts = async () => Contact.findAll();
 
 //Повертає об'єкт контакту з таким id. Повертає null, якщо контакт з таким id не знайдений
 export const getContactById = (contactId) =>
-   User.findOne({
+   Contact.findOne({
       where: { id: contactId },
    });
 
 //Повертає об'єкт видаленого контакту. Повертає null, якщо контакт з таким id не знайдений
-export const removeContact = (id) =>
-   User.destroy({
+export const removeContact = async (id) => {
+   const contact = await getContactById(id);
+   if (!contact) return null;
+
+   await Contact.destroy({
       where: { id },
    });
 
+   return contact;
+};
+
 //Повертає об'єкт доданого контакту (з id)
-export const addContact = (data) => User.create(data);
+export const addContact = (data) => Contact.create(data);
 
 //Повертає об'єкт оновленого контакту. Повертає null, якщо контакт з таким id не знайдений
 export const updateContact = async (contactId, data) => {
