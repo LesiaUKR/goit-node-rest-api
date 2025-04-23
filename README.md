@@ -10,6 +10,8 @@ Continue developing the REST API for working with a contacts collection.
 
 Create an account on Render. Then create a new PostgreSQL database in your account, which should be named db-contacts.
 
+![task_1](assets/task_1.png)
+
 ## Step 2
 
 Install the pgAdmin graphical editor for convenient work with the PostgreSQL database. Connect to the created cloud database through the graphical editor and create a contacts table.
@@ -134,3 +136,4 @@ Points may be deducted for incorrectly implemented items listed above:
 
 # TASK'S RESULTS
 
+![results_1](assets/results_1.jpg)
