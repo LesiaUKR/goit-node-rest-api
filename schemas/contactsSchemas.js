@@ -16,9 +16,8 @@ export const createContactSchema = Joi.object({
       "string.base": "phone should be a text",
       "any.required": "phone is a required field",
    }),
-   favorite: Joi.boolean().required().messages({
-      "boolean.base": "favorite should be a boolean",
-      "any.required": "favorite is a required field",
+   favorite: Joi.boolean().messages({
+      "boolean.base": "favorite should be a boolean"
    }),
 });
 
