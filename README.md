@@ -1,6 +1,4 @@
-# HW-3 | PostgresSQL та Sequelize
-
-# Topic 6. PostgreSQL and Sequelize. Homework
+# HW-3 | PostgreSQL and Sequelize
 
 Create a branch called 03-postgresql from the master branch.
 
