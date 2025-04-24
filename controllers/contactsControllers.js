@@ -3,13 +3,24 @@ import HttpError from "../helpers/HttpError.js";
 import ctrlWrapper from "../decorators/ctrlWrapper.js";
 
 const getAllContacts = async (req, res) => {
-   const data = await contactsService.listContacts();
-   res.json(data);
+   const { id: userId } = req.user;
+   const { page, limit, favorite } = req.query;
+   
+   const data = await contactsService.listContacts(userId, { page, limit, favorite });
+   
+   res.json({
+      totalItems: data.count,
+      contacts: data.rows,
+      currentPage: Number(page) || 1,
+      totalPages: Math.ceil(data.count / (Number(limit) || 20))
+   });
 };
 
 const getOneContact = async (req, res) => {
    const { id } = req.params;
-   const data = await contactsService.getContactById(id);
+   const { id: userId } = req.user;
+   
+   const data = await contactsService.getContactById(id, userId);
    if (!data) {
       throw HttpError(404, `Contact with id ${id} not found`);
    }
@@ -18,24 +29,26 @@ const getOneContact = async (req, res) => {
 
 const deleteContact = async (req, res) => {
    const { id } = req.params;
-   const deletedContact = await contactsService.removeContact(id);
+   const { id: userId } = req.user;
+   
+   const deletedContact = await contactsService.removeContact(id, userId);
    if (!deletedContact) {
       throw HttpError(404, `Contact with id ${id} not found`);
    }
-   
-    res
-    .status(200)
-    .json({ message: `Contact with id=${id} deleted successfully` });
+   res.json(deletedContact);
 };
 
 const createContact = async (req, res) => {
-   const result = await contactsService.addContact(req.body);
+   const { id: userId } = req.user;
+   const result = await contactsService.addContact(req.body, userId);
    res.status(201).json(result);
 };
 
 const updateContact = async (req, res) => {
    const { id } = req.params;
-   const result = await contactsService.updateContact(id, req.body);
+   const { id: userId } = req.user;
+   
+   const result = await contactsService.updateContact(id, req.body, userId);
    if (!result) {
       throw HttpError(404, "Not found");
    }
@@ -44,9 +57,11 @@ const updateContact = async (req, res) => {
 
 const updateStatusContact = async (req, res) => {
    const { id } = req.params;
-   const result = await contactsService.updateStatusContact(id, req.body);
+   const { id: userId } = req.user;
+   
+   const result = await contactsService.updateStatusContact(id, req.body, userId);
    if (!result) {
-      throw HttpError(404, `Contact with id=${id} not found`);
+      throw HttpError(404, "Not found");
    }
    res.json(result);
 };

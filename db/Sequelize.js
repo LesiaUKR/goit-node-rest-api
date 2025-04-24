@@ -10,17 +10,19 @@ const sequelize = new Sequelize({
    dialectOptions: {
       ssl: true,
    },
+   logging: console.log,
 });
 
 try {
-   await sequelize.authenticate();
-   console.log("Database connection successful");
-
-   // await sequelize.sync(); // Створює або перезаписує таблиці
-   // console.log("Таблиці були створені або перезаписані!");
+  await sequelize.authenticate();
+  console.log("Database connection successful");
+  
+//  await sequelize.sync({ force: true });
+//   console.log("All models were synchronized successfully");
 } catch (error) {
-   console.log(`Error connection to database ${error.message}`);
-   process.exit(1)
+  console.log(`Error connection to database ${error.message}`);
+  process.exit(1);
 }
+
 
 export default sequelize;

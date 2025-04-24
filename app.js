@@ -1,8 +1,11 @@
+import "dotenv/config";
+
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
-import "dotenv/config";
+
 import contactsRouter from "./routes/contactsRouter.js";
+import authRouter from "./routes/authRouter.js";
 
 import sequelize from "./db/Sequelize.js";
 const app = express();
@@ -10,6 +13,9 @@ const app = express();
 app.use(morgan("tiny"));
 app.use(cors());
 app.use(express.json());
+
+// Маршрути для аутентифікації
+app.use("/api/auth", authRouter);
 
 app.use("/api/contacts", contactsRouter);
 
@@ -28,3 +34,18 @@ const port = Number(PORT);
 app.listen(port, () => {
    console.log(`Server is running. Use our API on port: ${port}`);
 });
+
+// const startServer = async () => {
+//   try {
+//     await initDB();
+    
+//     app.listen(port, () => {
+//       console.log(`Server is running. Use our API on port: ${port}`);
+//     });
+//   } catch (error) {
+//     console.error("Failed to start server:", error);
+//     process.exit(1);
+//   }
+// };
+
+// startServer();

@@ -1,12 +1,16 @@
 import express from "express";
 import contactsControllers from "../controllers/contactsControllers.js";
 import validateBody from "../helpers/validateBody.js";
+import authenticate from "../middlewares/authenticate.js";
 import {
    createContactSchema,
    updateContactSchema,
 } from "../schemas/contactsSchemas.js";
 
 const contactsRouter = express.Router();
+
+// Усі маршрути захищені мідлваром автентифікації
+contactsRouter.use(authenticate);
 
 contactsRouter.get("/", contactsControllers.getAllContacts);
 
