@@ -30,7 +30,12 @@ const login = async (req, res) => {
   const user = await authService.findUserByEmail(email);
   if (!user) {
     throw HttpError(401, "Email or password is wrong");
-  }
+   }
+   
+   // Перевіряємо чи верифікований користувач
+  if (!user.verify) {
+    throw HttpError(401, "Email not verified. Please check your email to verify your account");
+  } 
   
   const isPasswordValid = await authService.validatePassword(
     password,
@@ -94,6 +99,41 @@ const updateAvatar = async (req, res) => {
   res.json({ avatarURL });
 };
 
+const verifyEmail = async (req, res) => {
+  const { verificationToken } = req.params;
+  
+  const user = await authService.verifyEmail(verificationToken);
+  if (!user) {
+    throw HttpError(404, "User not found");
+  }
+  
+  res.status(200).json({
+    message: "Verification successful",
+  });
+};
+
+const resendVerificationEmail = async (req, res) => {
+  const { email } = req.body;
+  
+  if (!email) {
+    throw HttpError(400, "missing required field email");
+  }
+  
+  const result = await authService.resendVerificationEmail(email);
+  
+  if (!result) {
+    throw HttpError(404, "User not found");
+  }
+  
+  if (result.verified) {
+    throw HttpError(400, "Verification has already been passed");
+  }
+  
+  res.status(200).json({
+    message: "Verification email sent",
+  });
+};
+
 export default {
   register: ctrlWrapper(register),
   login: ctrlWrapper(login),
@@ -101,4 +141,6 @@ export default {
   getCurrent: ctrlWrapper(getCurrent),
   updateSubscription: ctrlWrapper(updateSubscription),
   updateAvatar: ctrlWrapper(updateAvatar),
+  verifyEmail: ctrlWrapper(verifyEmail),
+  resendVerificationEmail: ctrlWrapper(resendVerificationEmail),
 };

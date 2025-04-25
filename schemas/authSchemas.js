@@ -33,3 +33,11 @@ export const subscriptionSchema = Joi.object({
     "any.only": "Subscription must be one of ['starter', 'pro', 'business']",
   }),
 });
+
+export const emailSchema = Joi.object({
+  email: Joi.string().pattern(emailRegexp).required().messages({
+    "string.pattern.base": "Enter a valid email",
+    "string.empty": "Email is required",
+    "any.required": "Email is required",
+  }),
+});

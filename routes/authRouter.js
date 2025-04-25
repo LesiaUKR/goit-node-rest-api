@@ -1,7 +1,7 @@
 import express from "express";
 import authControllers from "../controllers/authControllers.js";
 import validateBody from "../helpers/validateBody.js";
-import { registerSchema, loginSchema, subscriptionSchema } from "../schemas/authSchemas.js";
+import { registerSchema, loginSchema, subscriptionSchema, emailSchema } from "../schemas/authSchemas.js";
 import authenticate from "../middlewares/authenticate.js";
 import upload from "../middlewares/upload.js"; 
 
@@ -43,7 +43,7 @@ authRouter.patch(
   authControllers.updateSubscription
 );
 
-// Додаємо новий маршрут для оновлення аватарки
+// Оновлення аватарки
 authRouter.patch(
   "/avatars",
   authenticate,
@@ -51,5 +51,17 @@ authRouter.patch(
   authControllers.updateAvatar
 );
 
+// Верифікація електронної пошти
+authRouter.get(
+  "/verify/:verificationToken",
+  authControllers.verifyEmail
+);
+
+// Повторна верифікація електронної пошти
+authRouter.post(
+  "/verify",
+  validateBody(emailSchema),
+  authControllers.resendVerificationEmail
+);
 
 export default authRouter;

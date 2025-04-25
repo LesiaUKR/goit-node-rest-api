@@ -10,6 +10,7 @@ import { v4 as uuidv4 } from "uuid";
 
 // Власні (локальні) модулі проєкту
 import { generateToken } from "../helpers/jwt.js";
+import { sendVerificationEmail } from "../helpers/emailService.js";
 import User from "../db/models/User.js";
 
 export const findUserByEmail = async (email) => {
@@ -19,11 +20,17 @@ export const findUserByEmail = async (email) => {
 export const createUser = async (userData) => {
   const avatarURL = gravatar.url(userData.email, { s: '250', r: 'pg', d: 'identicon' });
   const hashedPassword = await bcrypt.hash(userData.password, 10);
+  const verificationToken = uuidv4();
+
   const user = await User.create({
     ...userData,
      password: hashedPassword,
      avatarURL,
+     verificationToken,
   });
+   
+    // Відправляємо лист для верифікації
+  await sendVerificationEmail(userData.email, verificationToken);
   
   return user;
 };
@@ -93,4 +100,45 @@ export const updateAvatar = async (userId, tempUploadPath) => {
     console.error("Error updating avatar:", error);
     throw error;
   }
+};
+
+export const verifyEmail = async (verificationToken) => {
+  const user = await User.findOne({ where: { verificationToken } });
+  if (!user) {
+    return null;
+  }
+  
+  await User.update(
+    { verificationToken: null, verify: true },
+    { where: { id: user.id } }
+  );
+  
+  return user;
+};
+
+export const resendVerificationEmail = async (email) => {
+  const user = await User.findOne({ where: { email } });
+  
+  if (!user) {
+    return null;
+  }
+  
+  if (user.verify) {
+    return { verified: true };
+  }
+  
+  // Створюємо новий токен, якщо старий вже використаний або загублений
+  if (!user.verificationToken) {
+    const verificationToken = uuidv4();
+    await User.update(
+      { verificationToken },
+      { where: { id: user.id } }
+    );
+    
+    await sendVerificationEmail(email, verificationToken);
+    return { sent: true };
+  }
+  
+  await sendVerificationEmail(email, user.verificationToken);
+  return { sent: true };
 };
