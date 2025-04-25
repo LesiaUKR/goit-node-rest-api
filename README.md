@@ -1,5 +1,4 @@
 # HW-11 | Email Verification for Contacts API
-# Email Verification for Contacts API
 
 This extension adds email verification functionality to the Contacts API project.
 
