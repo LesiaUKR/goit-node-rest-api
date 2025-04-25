@@ -1,3 +1,6 @@
+import fs from "fs/promises";
+import path from "path";
+
 import * as authService from "../services/authServices.js";
 import HttpError from "../helpers/HttpError.js";
 import ctrlWrapper from "../decorators/ctrlWrapper.js";
@@ -16,6 +19,7 @@ const register = async (req, res) => {
     user: {
       email: newUser.email,
       subscription: newUser.subscription,
+      avatarURL: newUser.avatarURL,
     },
   });
 };
@@ -54,11 +58,13 @@ const logout = async (req, res) => {
 };
 
 const getCurrent = async (req, res) => {
-  const { email, subscription } = req.user;
-  
+  const { email, subscription, avatarURL } = req.user;
+  console.log("User object:", req.user);
+  console.log("User properties:", Object.keys(req.user));
   res.json({
     email,
-    subscription,
+     subscription,
+     avatarURL
   });
 };
 
@@ -74,10 +80,25 @@ const updateSubscription = async (req, res) => {
   });
 };
 
+// Новий контролер для оновлення аватарки
+const updateAvatar = async (req, res) => {
+  if (!req.file) {
+    throw HttpError(400, "Avatar file is required");
+  }
+  
+  const { id } = req.user;
+  const { path: tempUploadPath } = req.file;
+  
+  const avatarURL = await authService.updateAvatar(id, tempUploadPath);
+  
+  res.json({ avatarURL });
+};
+
 export default {
   register: ctrlWrapper(register),
   login: ctrlWrapper(login),
   logout: ctrlWrapper(logout),
   getCurrent: ctrlWrapper(getCurrent),
   updateSubscription: ctrlWrapper(updateSubscription),
+  updateAvatar: ctrlWrapper(updateAvatar),
 };

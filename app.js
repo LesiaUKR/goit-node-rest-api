@@ -9,6 +9,8 @@ import authRouter from "./routes/authRouter.js";
 
 import sequelize from "./db/Sequelize.js";
 const app = express();
+// Додаємо після імпортів, але перед маршрутами
+app.use(express.static("public"));
 
 app.use(morgan("tiny"));
 app.use(cors());
